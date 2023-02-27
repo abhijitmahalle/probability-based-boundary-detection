@@ -1,126 +1,58 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 # Probability based edge detection
-# Phase 1
-My homework 0 submission for the course [CMSC733 Computer Processing of Pictorial Information](https://cmsc733.github.io/2021/hw/hw0/).
-In this repository, a simple of version of PB boundary detection
-algorithm has been implemented. The classical approaches
-like Canny and Sobel edge detectors measures discontinuities
-in the image intensities to detect edges. The PB algorithm
-considers texture and color information along with intensity,
-making it a better performing algorithm.
-## Sample input image
-<img src="https://github.com/sakshikakde/probability-based-edge-detection/blob/main/Phase1/data/BSDS500/Images/10.jpg" width="300" height="300">
+## Phase 1
+This repository consits of a simple implementaion of [Probability of boundary detection](https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/papers/amfm_pami2010.pdf) algorithm and its comparsion with the classical approaches for edge detection like Canny and Sobel edge detectors that measures discontinuities in the image intensities to detect edges. The PB algorithm considers texture and color information along with intensity, making it a better performing algorithm. This algorithm predicts per pixel probability of the boundary detected. The original image and the output of implementation is shown below:
 
-## Filter banks
-Filter banks are a set of filters, that are applied over an
-image to extract multiple features. In this homework, filter
-banks have been used to extract the texture properties. The
-following subsections will describe in brief the implementation
-of DoG filters, Leung-Malik filters and Gabor filters.
-### Oriented Derivative of Gaussian Filters      
-<img src="https://github.com/sakshikakde/probability-based-edge-detection/blob/main/Phase1/results/Filters/DoG.png" width="500" height="500">     
+<img src="Phase1/data/BSDS500/Images/3.jpg" align="center" alt="Original" width="400"/> <img src="Phase1/results/PbLite/PbLite_3.png" align="center" alt="PBLite" width="400"/>
 
-### Leung-Malik Filters: LM large and LM small             
-<img src="https://github.com/sakshikakde/probability-based-edge-detection/blob/main/Phase1/results/Filters/LM.png" width="500" height="500">      
+The algorithm of PBLite detection is shown below:
 
-### Gabor Filters       
-<img src="https://github.com/sakshikakde/probability-based-edge-detection/blob/main/Phase1/results/Filters/Gabor.png" width="500" height="500">        
+<img src="Phase1/results/hw0.png" align="center" alt="PBLite"/>
 
-## Texton Maps    
-The filters described in the previous section are to detect
-the texture properties in an image. Since each filter bank has
-multiple filters and three such filter banks have been used,
-the result is a vector of filter responses. This vector of filter
-response associated with each pixel is encoding a texture
-property. Based on this filter response vectors, pixels with
-similar texture property were clustered together using K-mean
-algorithm(K= 64). The output of K-mean clustering is a Texton
-map(τ )
+The main steps for implementing the same are:
 
-<img src="https://github.com/sakshikakde/probability-based-edge-detection/blob/main/Phase1/results/Textron_map/TextonMap_10.jpg" width="300" height="300">      
+### Step 1: Feature extraction using Filtering
+The filter banks implemented for low-level feature extraction are Oriented Derivative if Gaussian Filters, Leung-Malik Filters (multi-scale) and Gabor Filter.
 
-## Brightness Maps    
-The image was clustered based on the brightness value for
-each pixel. The images were first converted to gray scale and
-K-mean algorithm(K=16) was used to get brightness maps.    
+<img src="Phase1/results/DoG.png" align="center" alt="DoG" width="250"/> <img src="Phase1/results/LM.png" align="center" alt="PBLite" width="250"/> <img src="Phase1/results/Gabor.png" align="center" alt="PBLite" width="250"/>
+
+### Step 2: Extracting texture, color and brightness using clustering
+Filter banks can be used for extraction of texture properties but here all the three filter banks are combined which results into vector of filter responses. As filter response vectors are generated, they are clustered together using k-means clustering. For Texton Maps k = 64 is used; Color and Brightness Maps k= 16 is used.
 
 
-<img src="https://github.com/sakshikakde/probability-based-edge-detection/blob/main/Phase1/results/Brightness_map/BrightnessMap_10.jpg" width="300" height="300">     
+<img src="Phase1/results/TextonMap/TextonMap_3.png" align="center" alt="DoG" width="250"/> <img src="Phase1/results/ColorMap/colormap_3.png" align="center" alt="PBLite" width="250"/> <img src="Phase1/results/BrightnessMap/BrightnessMap_3.png" align="center" alt="PBLite" width="250"/>
 
-## Color Maps
-The image consists of three color channals(RGB), describ-
-ing the color property at each pixel. The images have been
-clustered using the RGB value using K-mean algorithm(K=16)
-to obtain color maps.   
+The gradient measurement is performed to know how much all features distribution is changing at a given pixel. For this purpose, half-disc masks are used.
 
-<img src="https://github.com/sakshikakde/probability-based-edge-detection/blob/main/Phase1/results/Color_map/ColorMap_10.jpg" width="300" height="300">    
+<img src="Phase1/results/TextonGradient/Tg_3.png" align="center" alt="PBLite" width="250"/> <img src="Phase1/results/ColorGradient/Cg_3.png" align="center" alt="PBLite" width="250"/> <img src="Phase1/results/BrightnessGradient/Bg_3.png" align="center" alt="PBLite" width="250"/>
 
-## Texture, Brightness and Color Gradients   
-To obtain Tg,Bg,Cg, we need to compute differences of values across different shapes and sizes. This can be achieved very efficiently by the use of Half-disc masks.    
+### Step 3: Pb-Score
+The gradient maps which are generated are combined with classical edge detectors like Canny and Sobel baselines for weighted avaerage.
 
-### Half disk masks
-<img src="https://github.com/sakshikakde/probability-based-edge-detection/blob/main/Phase1/results/Filters/HDMasks_12.png" width="300" height="300">     
-
-### Texture Gradient
-<img src="https://github.com/sakshikakde/probability-based-edge-detection/blob/main/Phase1/results/T_g/tg_10.jpg" width="300" height="300">      
-
-### Brightness Gradient
-<img src="https://github.com/sakshikakde/probability-based-edge-detection/blob/main/Phase1/results/B_g/bg_10.jpg" width="300" height="300">       
-
-### Color Gradient
-<img src="https://github.com/sakshikakde/probability-based-edge-detection/blob/main/Phase1/results/C_g/cg_10.jpg" width="300" height="300">    
-
-## Sobel and Canny baseline
-The outputs from Sobel and Canny edge detector are
-combined using weighted average method.   
-### Sobel baseline    
-<img src="https://github.com/sakshikakde/probability-based-edge-detection/blob/main/Phase1/data/BSDS500/SobelBaseline/10.png" width="300" height="300">     
-
-### Canny baseline    
-<img src="https://github.com/sakshikakde/probability-based-edge-detection/blob/main/Phase1/data/BSDS500/CannyBaseline/10.png" width="300" height="300">     
-
-## Pb-lite output
-In the final step, the features from baseline methods(Canny
-and Sobel operator) were combined with the gradients of τ ,
-β, ζ.    
-
-
-<img src="https://github.com/sakshikakde/probability-based-edge-detection/blob/main/Phase1/results/pb_lite_output/10.png" width="300" height="300"> 
-
-# Running the code
-# File structure
-    .
+## Instructions to run the code:
+```
+python Wrapper.py
+```
+## File structure
+    Phase1
     ├── Code
     |  ├── Wrapper.py
     ├── Data
     |  ├── BSDS500
-    ├── Results
-    |  ├── Filters
-    |  ├── Testron_map
+    ├── results
+    |  ├── BrightnessGradient
     |  ├── Brightness_map
+    |  ├── ColorGradient
     |  ├── Color_map
-    |  ├── T_g
-    |  ├── B_g
-    |  ├── C_g
-    |  ├── pb_lite_output
-    
+    |  ├── PbLite
+    |  ├── TextonGradient
+    |  ├── TextonMap
+    |  ├── Other filter outputs
 
-# How to run the code
-- Change the location to      
-```{root_directory}/Phase1 ```  
+This was implemented as part of [CMSC733](https://cmsc733.github.io/2022/hw/hw0/) and for detailed report refer [here](https://github.com/AbhijitMahalle/probability-based-boundary-detection/blob/master/Report.pdf).
 
-- Run the following command       
-```python3 Code/Wrapper.py ```
-
-# Phase 2
+## Phase 2
 In this section, a basic neural network and its modified
-version for classification on CIFAR10 dataset have been de-
-scribed. Later, a case study for ResNet, ResNext and DenseNet
-architecture was conducted. Refer [report](https://github.com/sakshikakde/probability-based-edge-detection/blob/main/Report.pdf) for more details. 
-<!-- 
-Phase 2:
-1)train.py
-following are the parameters that need to updated before running the code:
-BasePath, CheckPointPath, NumEpochs, DivTrain, MiniBatchSize, LoadCheckPoint, LogsPath, Plotpath
-2)test.py
-following are the parameters that need to updated before running the code:
-ModelPath, BasePath, TxtPath, Plotpath -->
+version for classification on CIFAR10 dataset have been de-scribed. Later, a case study for ResNet, ResNext and DenseNet
+architecture was conducted. Refer [report](https://github.com/AbhijitMahalle/probability-based-boundary-detection/blob/master/Report.pdf) for more details. 
