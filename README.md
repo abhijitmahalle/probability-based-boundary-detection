@@ -30,7 +30,7 @@ The gradient measurement is performed to know how much all features distribution
 ### Step 3: Pb-Score
 The gradient maps which are generated are combined with classical edge detectors like Canny and Sobel baselines for weighted avaerage.
 
-## Instructions to run the code:
+## Instruction to run the code:
 ```
 python Wrapper.py
 ```
