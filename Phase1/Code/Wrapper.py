@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
 """
-CMSC733 Spring 2021: Classical and Deep Learning Approaches for
+CMSC733 Spring 2022: Classical and Deep Learning Approaches for
 Geometric Computer Vision
 Homework 0: Alohomora: Phase 1 Starter Code
 
 
 Author(s): 
-Sakshi Kakde
+Abhijit Mahalle
 M.Eng. Robotics,University of Maryland, College Park
 """
 
